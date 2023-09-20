@@ -1,0 +1,24 @@
+{
+  "name": "gen-ts-scaffold",
+  "version": "1.0.1",
+  "description": "CLI tool to generate TypeScript projects.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "bin": {
+    "ts-gen": "./src/index.js"
+  },
+  "author": "Eduardo Ibarr de Paula",
+  "license": "ISC",
+  "keywords": [
+    "TypeScript",
+    "CLI",
+    "Scaffolding",
+    "Project Initialization",
+    "package.json",
+    "Node.js",
+    "Template",
+    "Boilerplate"
+  ]
+}
