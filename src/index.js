@@ -9,7 +9,7 @@ const read = readline.createInterface({
   output: process.stdout,
 });
 
-console.log("\nWelcome to ts-gen!\n");
+console.log("\nWelcome to gen-ts-scaffold!\n");
 
 function copyFile(source, target) {
   const targetPath = fs.lstatSync(target).isDirectory()
@@ -55,6 +55,11 @@ function createProject(projectName, shouldCustomize) {
       finalizeProject
     );
   } else {
+    const packageJsonPath = path.join(projectPath, "package.json");
+    const packageData = require(packageJsonPath);
+    packageData.name = projectName;
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageData, null, 2));
+
     finalizeProject();
   }
 
@@ -63,7 +68,7 @@ function createProject(projectName, shouldCustomize) {
     console.log("\nHere's how you can get started:");
     console.log(`1. Navigate to your project folder: cd ${projectPath}`);
     console.log("2. Install the dependencies: npm install");
-    console.log("3. Start the development server: npm start");
+    console.log("3. Start the development server: npm run dev");
     console.log("\nHappy coding!\n");
     read.close();
   }
@@ -71,7 +76,8 @@ function createProject(projectName, shouldCustomize) {
 
 read.question("Do you want to customize package.json? (y/n): ", (answer) => {
   const projectName = process.argv[2] || "my-new-project";
-  const shouldCustomize = answer.toLowerCase() === "y";
+  const shouldCustomize =
+    answer.trim().toLowerCase() === "y" || answer.trim() === "";
 
   createProject(projectName, shouldCustomize);
 });

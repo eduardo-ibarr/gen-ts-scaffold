@@ -13,18 +13,30 @@ function askQuestion(
   field,
   validationFn,
   packageJson,
+  defaultAnswer,
   callback
 ) {
-  read.question(question, (answer) => {
-    answer = answer.trim();
-    if (validationFn && !validationFn(answer)) {
-      console.log("Invalid input. Please try again.");
-      askQuestion(read, question, field, validationFn, packageJson, callback);
-    } else {
-      packageJson[field] = answer || packageJson[field];
-      callback();
+  read.question(
+    `${question}${defaultAnswer ? `(${defaultAnswer}) ` : ""}`,
+    (answer) => {
+      answer = answer.trim() || defaultAnswer;
+      if (validationFn && !validationFn(answer)) {
+        console.log("Invalid input. Please try again.");
+        askQuestion(
+          read,
+          question,
+          field,
+          validationFn,
+          packageJson,
+          defaultAnswer,
+          callback
+        );
+      } else {
+        packageJson[field] = answer || packageJson[field];
+        callback();
+      }
     }
-  });
+  );
 }
 
 function customizePackageJson(
@@ -38,8 +50,8 @@ function customizePackageJson(
   const packageJson = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
   const questions = [
-    { question: "Project name: ", field: "name" },
-    { question: "Version: ", field: "version" },
+    { question: "Project name: ", field: "name", default: projectName }, // suggest projectName as default
+    { question: "Version: ", field: "version", default: "1.0.0" },
     { question: "Description: ", field: "description" },
     { question: "Author: ", field: "author" },
     {
@@ -48,18 +60,37 @@ function customizePackageJson(
       postProcess: (answer) =>
         answer ? answer.split(",").map((k) => k.trim()) : [],
     },
-    { question: "License: ", field: "license", validation: validateLicense },
+    {
+      question: "License: ",
+      field: "license",
+      validation: validateLicense,
+      default: "MIT",
+    },
   ];
 
   function askNextQuestion(index) {
     if (index < questions.length) {
-      const { question, field, validation, postProcess } = questions[index];
-      askQuestion(read, question, field, validation, packageJson, () => {
-        if (postProcess) {
-          packageJson[field] = postProcess(packageJson[field]);
+      const {
+        question,
+        field,
+        validation,
+        postProcess,
+        default: defaultAnswer,
+      } = questions[index];
+      askQuestion(
+        read,
+        question,
+        field,
+        validation,
+        packageJson,
+        defaultAnswer,
+        () => {
+          if (postProcess) {
+            packageJson[field] = postProcess(packageJson[field]);
+          }
+          askNextQuestion(index + 1);
         }
-        askNextQuestion(index + 1);
-      });
+      );
     } else {
       fs.writeFileSync(filePath, JSON.stringify(packageJson, null, 2));
       console.log("\nYour package.json has been customized!");
