@@ -1,0 +1,42 @@
+# Node specific
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.json
+
+# TypeScript
+*.tsbuildinfo
+dist/
+
+# IDEs and editors
+/.idea
+*.swp
+*.swo
+*.sublime*
+.vscode/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Build and release
+*.log
+*.tgz
+
+# Test directories
+coverage/
+.nyc_output/
+
+# Environment files
+.env
+
+# Temp files
+*.tmp
+*.temp
+
+# Optional: Uncomment if you don't want to version your .env.local files
+# .env.local
+
+# Optional: Uncomment if you have documentation generated
+# docs/
